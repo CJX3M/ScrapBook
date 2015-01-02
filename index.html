@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My ScrapBook</title>
+	
+	<!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+		body { font-family: Helvetica, Arial, sans-serif; }
+		div { width: 800px; height: 400px; margin: 40px auto; padding: 20px; border: 2px solid #5298fc; }
+		h1 { font-size: 30px; margin: 0; }
+		p { margin: 40px 0; }
+		em { font-family: monospace; }
+		a { color: #5298fc; text-decoration: none; }
+		
+		[draggable] {
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            /* Required to make elements draggable in old WebKit */
+            -khtml-user-drag: element;
+            -webkit-user-drag: element;
+            cursor: move;
+        }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>Congratulations! You're already hosting with Parse.</h1>
+      <p>To get started, edit this file at <em>public/index.html</em> and start adding static content.</p>
+      <p>If you want something a bit more dynamic, delete this file and check out <a href="https://parse.com/docs/hosting_guide#webapp">our hosting docs</a>.</p>
+    </div>
+    <div class="login signin_facebook" onclick="Login();">Log In</div>
+    <table border="1px" width=100%>
+        <tr>
+            <!-- albums/pictures list -->
+            <td width="30%">
+                <ol id='albums' style="height:890px; width=100%; overflow-y: auto;"></ol>
+            </td>
+            <!-- canvas -->
+            <td width="80%">
+                <div id='canvas-wrapper'>
+                    <canvas id='canvas' width="780px" height="890px" style="border: 1px solid red;"></canvas>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <!-- fabric framework necesary to create, store and load scrapbooks --> 
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- FB Main script -->
+    <script src="js/fb.js"></script>
+    <!-- Main script -->
+    <script src="js/ScrapMain.js"></script>
+  </body>
+</html>
