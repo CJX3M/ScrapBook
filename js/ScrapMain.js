@@ -1,12 +1,6 @@
 var canvas;
 var imageTransfer;
 
-// Initialize FB and Canvas
-$(document).ready(function(){
-    initializeFB();
-    initializeCanvas();
-})
-
 function initializeCanvas() {
     canvas = new fabric.Canvas('canvas');
     canvas.on("after:render", function(){ canvas.calcOffset() });
