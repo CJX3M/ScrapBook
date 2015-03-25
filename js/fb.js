@@ -1,6 +1,11 @@
+var LoggedUser;
+
+Parse.initialize("WbFkw1hALXfufg9GRO3C4lE4YEPveyB3BLZlkZKQ", "XAElZQL58DfkKoqDtgcmyr0gPlYAAeHO2RJcRljc");
+
+
 window.fbAsyncInit = function() {
      $.ajaxSetup({cache: true});
-
+    initializeCanvas();
     Parse.FacebookUtils.init({ // this line replaces FB.init({
         appId      : '1579130992305490', // Facebook App ID
         status     : true,  // check Facebook Login status
@@ -13,6 +18,7 @@ window.fbAsyncInit = function() {
     FB.getLoginStatus(function(response) {
         statusChangeCallback(response);
     });
+
 };
 
 (function(d, s, id){
@@ -34,8 +40,10 @@ function statusChangeCallback(response) {
     if (response.status === 'connected') {
         // Logged into your app and Facebook.
         $(".login").hide();
-        initializeCanvas();
-        enlistarAlbums();
+        ListAlbums();
+        if(LoggedUser == null)
+            LoggedUser = Parse.User.current();
+        ListScrapbooks();
     } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app.
     } else {
@@ -52,11 +60,12 @@ function Login(){
         //revisarPermisos();
         enlistarAlbums();
      }, {scope: 'user_groups, publish_actions, user_photos', auth_type: 'rerequest'});*/
-    Parse.FacebookUtils.logIn('user_photos, user_email', {
+    Parse.FacebookUtils.logIn('user_photos, email', {
         success: function(user) {
                 $(".login").hide();
-                initializeCanvas();
-                enlistarAlbums();
+                ListAlbums();
+                LoggedUser = user;
+                ListScrapbooks();
             },
         error: function(user, error) {
             alert("User cancelled the Facebook login or did not fully authorize.");
@@ -64,7 +73,7 @@ function Login(){
     });
 }
 
-function enlistarAlbums(){
+function ListAlbums(){
     FB.api("/me/albums",
         function (response) {
           if (response && !response.error) {
@@ -102,13 +111,15 @@ function enlistPreviews(albumId, list) {
             }
         })
     }else{
-        if(list.hasClass("expanded")){
+        /*if(list.hasClass("expanded")){
             list.removeClass("expanded");
             list.find("#photoList").hide("fast");
         }else{
             list.addClass("expanded");
             list.find("#photoList").show("slow");
-        }
+        }*/
+        list.toggleClass('expanded');
+        list.find("#photoList").toggle();
     };
 }
 
