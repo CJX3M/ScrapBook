@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My ScrapBook</title>
 	
-	<!-- Bootstrap -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-
+      <!-- Bootstrap -->
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -17,7 +17,9 @@
     <![endif]-->
 
     <style>
-		body { font-family: Helvetica, Arial, sans-serif; }
+		body { 
+            font-family: Helvetica, Arial, sans-serif;
+        }
 		/*div { width: 800px; height: 400px; margin: 40px auto; padding: 20px; border: 2px solid #5298fc; }*/
 		h1 { font-size: 30px; margin: 0; }
 		p { margin: 40px 0; }
@@ -35,6 +37,9 @@
             cursor: move;
         }
     </style>
+      
+    <!-- Fonts script -->
+    <script src="js/ScrapFonts.js"></script>
   </head>
   <body>
     <div class="login signin_facebook" onclick="Login();">Log In</div>
@@ -45,10 +50,81 @@
                 <ol id='albums' style="height:890px; width=100%; overflow-y: auto;"></ol>
             </td>
             <!-- canvas -->
-            <td width="80%">
+            <td width="80%" rowspan="2">
+                <div id='toolBox' class="btn-toolbar" role="toolbar" arial-label="Text Toolbar">
+                    <button id='addText' class="btn btn-default btn-xs" type="button" onclick="SetText(this);">Add Text</button>
+                    <div class="btn-group btn-group-xs" role="group" aria-label="Font Normal Options">
+                        <button id="selFontFamily" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true" style="width:150px; text-align:initial">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:95%;overflow:hidden">
+                                        <span id="selFont">[Select the Font to Use]</span>
+                                    </td>
+                                    <td>
+                                        <span class="caret"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </button>
+                        <ul id="selFontFamilyLst" class="dropdown-menu" role="menu" aria-labelledby="selFontFamily">
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Arial, Helvetica, sans-serif" onclick="SetFont(this);">Arial</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Comic Sans MS, cursive, sans-serif" onclick="SetFont(this);">Comic Sans</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Impact, Charcoal, sans-serif" onclick="SetFont(this);">Impact</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Sans Unicode, Lucida Grande, sans-serif" onclick="SetFont(this);">Lucida</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Tahoma, Geneva, sans-serif" onclick="SetFont(this);">Tahoma</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Trebuchet MS, Helvetica, sans-serif" onclick="SetFont(this);">Trebuchet</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Verdana, Geneva, sans-serif" onclick="SetFont(this);">Verdana</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Georgia, serif" onclick="SetFont(this);">Georgia</a></option>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Courier New, Courier, monospace" onclick="SetFont(this);">Courier New</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Console, Monaco, monospace" onclick="SetFont(this);">Lucida Console</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Times New Roman, Times, serif" onclick="SetFont(this);">Times New Roman</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lobster, cursive" onclick="SetFont(this);">Lobster</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Cherry Cream Soda, cursivew" onclick="SetFont(this);">Cherry Cream Soda</a></li>
+                        </ul>
+                        <button id='boldText' class="btn btn-default" style="font-weigth:bold" onclick="SetToggleButton(this);" type="button">B</button>
+                        <button id='italicText' class="btn btn-default" style="font-style:italic" onclick="SetToggleButton(this);" type="button">I</button>
+                        <button id='underlineText' class="btn btn-default" style="text-decoration: underline;" onclick="SetToggleButton(this);" type="button">U</button>
+                        <button id='strokeText' class="btn btn-default" style="text-decoration: line-through;" onclick="SetToggleButton(this);" type="button">S</button>
+                        <button id='overlineText' class="btn btn-default" style="text-decoration: overline;" onclick="SetToggleButton(this);" type="button">O</button>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon">Text Color:</span>
+                            <input id='textColor' class="btn btn-default btn-xs" type="color"/>                        
+                        </div>
+                    </div>
+                    <div class="form-group form-inline" arial-label="Special Text Options">
+                        <button id='shadowText' class="btn btn-default btn-xs" style="text-shadow: 2px 2px #ff0000;" type="button" onclick="ToggleShadowOptions(this);">S</button>
+                        <div id='shadowTextOptions' class="form-group" style="display:none">
+                            <input id='txtShadowWidth' class="form-control input-sm" type='number' style="width:120px;" placeholder="Shadow Width"/>
+                            <input id='txtShadowLeft' class="form-control input-sm" type='number' style="width:60px;" placeholder="Left"/>
+                            <input id='txtShadowTop' class="form-control input-sm" type='number' style="width:60px;" placeholder="Top"/>
+                            <div class="form-group">
+                                Shadow Color:
+                                    <input id='shadowColor' class="btn btn-default btn-xs" type="color"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            Outline Color:
+                            <input id='outlineColor' class="btn btn-default btn-xs" type="color"/>
+                        </div>
+                        <input id='txtOutlineWidth' type='number' class="form-control input-sm" style="width:120px;" placeholder="Outline Weight"/>
+                    </div>
+                </div>
                 <div id='canvas-wrapper'>
                     <canvas id='canvas' width="780px" height="890px" style="border: 1px solid red;"></canvas>
-                </div>
+                </div>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ol id="scrapBookLst">
+                </ol>
+            </td>
+        </tr>
+        <tr valign="center">
+            <td colspan="2" align="right">
+                <button id="btnSavePage" type="button" class="btn btn-success" onclick="SavePage()">Save Page</button>
+                <button id="btnSaveBook" type="button" class="btn btn-success" onclick="SaveBook()">Save Book</button>
+                <button id="btnClearPage" type="button" class="btn btn-success" onclick="ClearPage()">Clear</button>
             </td>
         </tr>
     </table>
@@ -59,12 +135,18 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <!-- Include Parse library -->
-    <script src="https://parse.com/downloads/javascript/parse-1.3.3.js"></script>
+    <script src="//www.parsecdn.com/js/parse-1.3.5.min.js"></script>
     <!-- Include the main script for Parse actions --> 
-    <script src="../cloud/main.js"></script>
+    <!-- script src="../cloud/main.js"></script-->
     <!-- FB Main script -->
     <script src="js/fb.js"></script>
     <!-- Main script -->
     <script src="js/ScrapMain.js"></script>
+    <!-- ScrapBook -->
+    <script src="js/ScrapBook.js"></script>
+    <!-- ScrapUser -->
+    <script src="js/ScrapUser.js"></script>
+    <!-- ScrapPage -->
+    <script src="js/ScrapPage.js"></script>
   </body>
 </html>
