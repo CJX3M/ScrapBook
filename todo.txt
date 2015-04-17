@@ -1,0 +1,37 @@
+# Cosas Por hacer
++ Agregar Páginas
++ Guardar Páginas nuevas en libros creados
++ Agregar Menú contextual
++ Agrupar y Desagrupar
+- Agregar filtros a imágenes
++ Modificar Texto
+- Agregar Módulo de Modificación
+- Hacer página e visualización
+- Módulo de aplicación de modificaciones
++ Lista de elementos agregados
++ Mover z-index de objetos
++ Opciones de edición de objeto seleccionado
++ Crear sitio de administración
++ Crear clase ScrapFonts
+- Crear clase ScrapStickers
++ Interface de administración de ScrapFonts
+- Interface de administración de ScrapStickers
+- Crear Clase ScrapTemplates
+- Interface de administración de Templates
+- Interface de Administración de usuarios
+- Interface de administración de ScrapBooks
+- Carga de Templates
+- Guardado de Templates personales
+- Carga del template seleccionado con cada hoja nueva
+- Eliminar Hoja del Scrapbook
+- Página de LogIn
+- Página de Pago
+- Generación de PDF
+- Agregar opciones de alineación e texto
+- Ajustar posicionamiento de agrupado/desagrupado
++ Ajustar SendToBack. Ya no puedes editar el elemento
+- Agregar loading splashscreen
+
+# Notas de TODO's
+- Z-Index es modificable por métodos de canvas
+

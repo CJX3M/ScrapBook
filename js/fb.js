@@ -1,11 +1,7 @@
 var LoggedUser;
 
-Parse.initialize("WbFkw1hALXfufg9GRO3C4lE4YEPveyB3BLZlkZKQ", "XAElZQL58DfkKoqDtgcmyr0gPlYAAeHO2RJcRljc");
-
-
 window.fbAsyncInit = function() {
      $.ajaxSetup({cache: true});
-    initializeCanvas();
     Parse.FacebookUtils.init({ // this line replaces FB.init({
         appId      : '1579130992305490', // Facebook App ID
         status     : true,  // check Facebook Login status
@@ -39,11 +35,7 @@ function statusChangeCallback(response) {
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
         // Logged into your app and Facebook.
-        $(".login").hide();
-        ListAlbums();
-        if(LoggedUser == null)
-            LoggedUser = Parse.User.current();
-        ListScrapbooks();
+        Login();
     } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app.
     } else {
@@ -80,7 +72,8 @@ function ListAlbums(){
             var id = 0;
             for(var i = 0; i < response.data.length; i++)
             {                    
-                $("#albums").append("<li style='cursor:pointer' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" + response.data[i].name + "</li>");
+                $("#albums").append("<a href='#' class='list-group-item' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" +
+                                    "<span class='glyphicon glyphicon-folder-close folderIcon' aria-hidden='true'></span> " + response.data[i].name + "</a>");
             }
         }
     });
@@ -97,41 +90,46 @@ function enlistPreviews(albumId, list) {
     {
         FB.api("/" + albumId + "/photos", function(response){
             if(response && !response.error){
-                var photoList = $("<ol id='photoList' style='display:hidden'></ol>");
+                var photoList = $("<ol id='photoList' style='display:hidden; height:320px; overflow-y:scroll; list-style-type: none;padding: 0px;margin: 0px;'></ol>");
                 for(var i = 0; i < response.data.length; i++){
-                    var listItem = $("<li></li>");
-                    var pic = $("<img src='" + findThumbnail(response.data[i].images) + "' draggable=\"true\"  ondragstart=\"handleDragStart(event)\" ondragend=\"handleDragEnd(event)\">")
-                    pic.data("obj", response.data[i]);
+                    var listItem = $("<li class='imagesLst list-inline'></li>");
+                    var image = findThumbnail(response.data[i].images);
+                    var pic = $("<div><img src='" + image.source + "' " + getSizeAdjust(image) + " draggable=\"true\"  ondragstart=\"handleDragStart(event)\" ondragend=\"handleDragEnd(event)\"></div>" + 
+                                "<span>" + response.data[i].name + "</span>")
+                    pic.find("img").data("obj", response.data[i]);
                     listItem.append(pic);
                     photoList.append(listItem);
                 }
                 list.append(photoList);
                 list.addClass("expanded");
+                list.find('.folderIcon').toggleClass("glyphicon-folder-close").toggleClass("glyphicon-folder-open");
                 list.find("#photoList").show("slow");
             }
         })
     }else{
-        /*if(list.hasClass("expanded")){
-            list.removeClass("expanded");
-            list.find("#photoList").hide("fast");
-        }else{
-            list.addClass("expanded");
-            list.find("#photoList").show("slow");
-        }*/
         list.toggleClass('expanded');
+        list.find('.folderIcon').toggleClass("glyphicon-folder-close").toggleClass("glyphicon-folder-open");
         list.find("#photoList").toggle();
     };
 }
 
 function findThumbnail(images) {
-    var source, smallestWidth;
+    var source, smallestWidth, retImage;
+    retImage = images[0];
     smallestWidth = images[0].width;
     source = images[0].source;
     for(var i = 1; i < images.length; i++){
         if(smallestWidth > images[i].width){
             smallestWidth = images[i].width;
-            source = images[i].source;
+            retImage = images[i];
         }
     }
-    return source;
+    return retImage;
+}
+
+function getSizeAdjust(image){
+    var style = "style='width: calc(100% - 20px);height: auto;'";
+    if(image.width < image.height)
+        style = "style='height: calc(100% - 10px);width: auto;'";
+    return style;
 }
