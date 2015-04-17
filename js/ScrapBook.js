@@ -10,17 +10,19 @@ var ScrapBook = Parse.Object.extend("Scrapbook", {
             page.pageNo = this.pages.length;
         }
     },
-    Save: function() {
+    Save: function(callBack) {
         this.save({
             Title: this.title,
-            ScrapUser: this.user != null ? this.user.id : LoggedUser.id,
+            ScrapUser: this.user != null ? this.user : LoggedUser,
         }, {
             success: function(_scrap){
                 console.log(_scrap.id)
-                for(var i = 0; i < this.pages.length; i++){
-                    this.pages[i].ScrapBook = _scrap;
-                    this.pages[i].Save();
-                }                
+                for(var i = 0; i < _scrap.pages.length; i++){
+                    _scrap.pages[i].ScrapBook = _scrap;
+                    _scrap.pages[i].Save();
+                }
+                if(callBack !== undefined)
+                    callBack();
             },
             error: function(_scrap, error){
                 console.error("Failed to save book: " + error);
@@ -30,32 +32,33 @@ var ScrapBook = Parse.Object.extend("Scrapbook", {
 },{
     create: function(_scrap) {
         var scrapBook = new ScrapBook();
+        scrapBook.id = _scrap.id;
         scrapBook.title = _scrap.get('Title');
         scrapBook.user = _scrap.get('ScrapUser');
-        scrapBook.pages = ScrapPage.findPages(scrapBook.id);
+        ScrapPage.findPages(scrapBook);
         return scrapBook;
     },
     findBook: function(scrapId) {
         var query = Parse.Query(ScrapBook);
         return query.get(scrapId, {
             success: function(_scrap){
-                var scrapBook = new ScrapBook();
-                return scrapBook.create(_scrap);
+                var scrapBook = ScrapBook.create(_scrap);
+                return scrapBook;
             }
         })
     },
-    findBooks: function(userId) {
+    findBooks: function(loggedUser, listMethod) {
+        loggedUser.ScrapBooks = [];
         var query = new Parse.Query(ScrapBook);
-        query.equalsTo("ScrapUser", userId);
+        query.equalTo("ScrapUser", loggedUser);
         return query.find().then(function(results) {
-            var books = []
             for(var i = 0; i < results.length; i++){
-                books.push(ScrapBook.create(results[i]));
+                loggedUser.ScrapBooks.push(ScrapBook.create(results[i]));
             }
-            return books;
+            if(loggedUser.ScrapBooks.length > 0 && listMethod !== undefined)
+                listMethod();
         },function(error) {
             console.error("Failed to retrieve user books: " + error);
-            return [];
         });
     }
 });
