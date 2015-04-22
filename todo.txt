@@ -28,9 +28,9 @@
 - Página de Pago
 - Generación de PDF
 - Agregar opciones de alineación e texto
-- Ajustar posicionamiento de agrupado/desagrupado
++ Ajustar posicionamiento de agrupado/desagrupado
 + Ajustar SendToBack. Ya no puedes editar el elemento
-- Agregar loading splashscreen
++ Agregar loading splashscreen
 
 # Notas de TODO's
 - Z-Index es modificable por métodos de canvas

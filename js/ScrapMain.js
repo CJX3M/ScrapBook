@@ -17,16 +17,19 @@ $(window).load(function () {
     initializeCanvas();
     loadFontsMethod = ListTextFonts;
     ScrapFont.getFonts(loadGoogleFonts)
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 function initializeCanvas() {
     'use strict';
     canvas = new fabric.CanvasEx('canvas');
+    UpdateSCProgressBar(40, "Setting Up Canvas");
     canvas.images = 0;
     canvas.texts = 0;
     canvas.stickers = 0;
     canvas.groups = 0;
     canvas.on("after:render", function () { canvas.calcOffset(); });
+    UpdateSCProgressBar();
     canvas.on('mouse:down', function (options) {
         if(options.target === undefined)
             options.target = {
@@ -39,28 +42,35 @@ function initializeCanvas() {
             ShowEditTextModal();
         }
     });
+    UpdateSCProgressBar();
     canvas.on('object:added', function (e) {
         EnlistElements();
     });
-    canvas.on('object:modified', function (e) {
+    UpdateSCProgressBar();
+    /*canvas.on('object:modified', function (e) {
         EnlistElements();
     });
+    UpdateSCProgressBar();*/
     canvas.on('object:removed', function (e) {
         EnlistElements();
     });
+    UpdateSCProgressBar();
     canvas.on('object:selected', function (e) {
         if (e.target.type === undefined || e.target.id === undefined) return;
         if (currentSelectedObject === undefined || currentSelectedObject.id !== e.target.id)
             HighlightElement(e.target.id);
     });
     ClearPage();
+    UpdateSCProgressBar();
     var canvasContainer = document.getElementById('canvas-wrapper');
+    UpdateSCProgressBar();
     canvasContainer.tabIndex = 1000;
     canvasContainer.addEventListener('dragenter', handleDragEnter, false);
     canvasContainer.addEventListener('dragover', handleDragOver, false);
     canvasContainer.addEventListener('dragleave', handleDragLeave, false);
     canvasContainer.addEventListener('drop', handleDrop, false);
     canvasContainer.addEventListener('contextmenu', function (e) {e.preventDefault(); return false;});
+    UpdateSCProgressBar();
     canvasContainer.addEventListener('keydown', function (e) {
         console.log(e);
         var key;
@@ -69,7 +79,7 @@ function initializeCanvas() {
         } else {
             key = e.keyCode;
         }        
-        if (e.keyCode === 123 || e.keyCode === 116) return;
+        if (key === 123 || key === 116) return;
         if (e.stopPropagation) {
             e.stopPropagation(); // stops the browser from redirecting.
         }
@@ -103,6 +113,7 @@ function initializeCanvas() {
                     break;                
         }
     }, false);
+    UpdateSCProgressBar();
     $(document).click(function (event) {
         if (!$(event.target).closest('#contextMenu').length) {
             if ($('#contextMenu').css("display") === "block") {
@@ -110,7 +121,9 @@ function initializeCanvas() {
                 currentObjectTarget = undefined;
             }
         }
+    UpdateSCProgressBar();
     });
+    $("#textContent").on("keydown", EnterMessage);
 }
 
 /* 
@@ -173,6 +186,19 @@ function handleDragEnd(e) {
     imageTransfer.removeClass('img_dragging');
 }
 
+function EnterMessage(e) {
+    var key;
+    if (window.event) {
+        key = window.event.keyCode;
+    } else {
+        key = e.keyCode;
+    }        
+    if (key === 123 || key === 116) { return; }
+    if (key === 13 && e.shiftKey) {
+        AddText();
+    }
+}
+
 function SetObjectId(canvasObject) {
     canvasObject.id = canvasObject.type === "image" ? "I" + cuniq(++canvas.images) 
         : canvasObject.type === "sticker" ? "S" + cuniq(++canvas.stickers) 
@@ -191,17 +217,15 @@ function ListTextFonts() {
                          + "onclick=\"SetFont(this);\">" + ScrapFonts[i].name + "</a></li>");
         fontsLst.append(listItem);
     }
+    UpdateSCProgressBar(100, "Start Creating ScrapBooKs!!!!!!");
+    setTimeout(function(){
+        $(".SplashScreenBg").fadeOut('slow');
+    }, 2500)
 }
 
 function SetText(button) {
     $(button).toggleClass('active');
     canvas.defaultCursor = $(button).hasClass('active') ? "crosshair" : "default";
-}
-
-function SetFont(option) {
-    $("#selFont").val($(option).text());
-    $("#selFont").text($(option).text());
-    $("#selFont").attr('style', $(option).attr('style'));
 }
 
 function ShowEditTextModal(text) {
@@ -233,6 +257,12 @@ function ShowEditTextModal(text) {
     $("#textOptions").modal("show");
 }
 
+function SetFont(option) {
+    $("#selFont").val($(option).text());
+    $("#selFont").text($(option).text());
+    $("#selFont").attr('style', $(option).attr('style'));
+}
+
 function AddText() {
     var text = currentObjectTarget.target.type === "text" ? currentObjectTarget.target : new fabric.Text("", {});
     var textParams = {
@@ -252,7 +282,7 @@ function AddText() {
         text: $("#textContent").val(),
     };
     text.set(textParams);
-    if (currentObjectTarget !== undefined)
+    if (currentObjectTarget.target.type === "canvas")
     {
         text.set({
             left: currentObjectTarget.e.layerX - text.width / 2,
@@ -261,9 +291,9 @@ function AddText() {
         SetObjectId(text);
         canvas.add(text);
         text.on('object:dblclick', function (options) {
-            options.target = text;
+            options.target = this;
             currentObjectTarget = options;
-            ShowEditTextModal(text);
+            ShowEditTextModal(options.target);
         });
     }
     else
@@ -506,8 +536,8 @@ function CreateGroup() {
             var object = fabric.util.object.clone(o);
             var index = canvas.getObjects().indexOf(o);
             object.set({
-                top: object.top+100,
-                left: object.left+100,
+                top: o.originalTop,
+                left: o.originalLeft,
                 hasControls: false,
                 hasBorders: false,
                 active: false,                
@@ -535,8 +565,8 @@ function DisbandGroup() {
         var object = fabric.util.object.clone(o);
         var index = canvas.getActiveObject().getObjects().indexOf(o);
         object.set({
-            top: canvas.getActiveObject().top + object.top,
-            left: canvas.getActiveObject().left + object.left,
+            top: canvas.getActiveObject().top + o.top,
+            left: canvas.getActiveObject().left + o.left,
             hasControls: true,
             hasBorders: true,
             active: false,
@@ -544,7 +574,7 @@ function DisbandGroup() {
         canvas.add(object);
         object.moveTo(index);
     });
-    deleteSelectedElement();
+    DeleteSelectedElement();
 }
 
 function Copy() {
@@ -670,4 +700,42 @@ function SendToBack() {
     else
         canvas.getActiveObject().sendToBack();
     canvas.renderAll();
+}
+
+function UpdateSCProgressBar(pctg, add, msg){
+    if (arguments.length === 1) {
+        if(typeof pctg === "string") {
+            msg = pctg;
+            pctg = undefined;
+        }
+    } else if (arguments.length === 2) { 
+        if(typeof add === "string") {
+            msg = add;
+            add = undefined;
+        }
+    }
+    if(pctg === undefined){
+        pctg = $(".SplashScreen").find(".progress-bar").css("width").replace("px", "");
+        pctg++;
+    }
+    if(add !== undefined && add){
+        pctg = $(".SplashScreen").find(".progress-bar").css("width").replace("px", "") + pctg;
+    }
+    if(msg !== undefined){
+        $(".SplashScreen").find(".progress-bar").find("span").text(msg);
+    }
+    $(".SplashScreen").find(".progress-bar").css("width", pctg + "%")
+}
+
+function GetObjectPos(object) {
+    if(object === undefined)
+        object = canvas.getActiveObject();
+    if(object.type === "group") {
+        console.log("Top: " + object.top + " Left: " + object.left + " Width: " + object.width + " Height: " + object.height);
+        object.forEachObject(function (o) {
+            console.log("Id: " + o.id + " Top: " + o.top + " Left: " + o.left + " Width: " + o.width + " Height: " + o.height);        
+        });
+    } else {
+        console.log("Id: " + object.id + " Top: " + object.top + " Left: " + object.left + " Width: " + object.width + " Height: " + object.height);                
+    }
 }

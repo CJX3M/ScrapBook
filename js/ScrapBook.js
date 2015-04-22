@@ -52,7 +52,10 @@ var ScrapBook = Parse.Object.extend("Scrapbook", {
         var query = new Parse.Query(ScrapBook);
         query.equalTo("ScrapUser", loggedUser);
         return query.find().then(function(results) {
-            for(var i = 0; i < results.length; i++){
+            var pgrRate = results.length * 0.1;
+            for(var i = 0; i < results.length; i++) {
+                if(UpdateSCProgressBar !== undefined)
+                    UpdateSCProgressBar(pgrRate * i, true, "Retrieving User ScrapBooKs");
                 loggedUser.ScrapBooks.push(ScrapBook.create(results[i]));
             }
             if(loggedUser.ScrapBooks.length > 0 && listMethod !== undefined)

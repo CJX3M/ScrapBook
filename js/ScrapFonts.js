@@ -33,9 +33,13 @@ var ScrapFont = Parse.Object.extend("ScrapFont", {
             model: ScrapFont,
         });
         var collection = new scrapFontsCollection();
+        var loadedFonts = false;
         collection.fetch({
             success: function(fonts){
+                var pgrRate = fonts.length * 0.1;
                 for(var i = 0; i < fonts.length; i++){
+                    if(UpdateSCProgressBar !== undefined)
+                        UpdateSCProgressBar(pgrRate * i, true, "Retrieving Fonts");
                     ScrapFonts.push(ScrapFont.create(fonts.models[i]));
                     WebFontConfig.google.families.push(ScrapFonts[i].family);
                 }
@@ -45,6 +49,6 @@ var ScrapFont = Parse.Object.extend("ScrapFont", {
             error: function(col, error){
                 console.error("Can't retrieve fonts collection: " + error);
             }
-        })
+        });
     }
 })

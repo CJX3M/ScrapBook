@@ -1,7 +1,8 @@
 var LoggedUser;
 
-window.fbAsyncInit = function() {
-     $.ajaxSetup({cache: true});
+window.fbAsyncInit = function () {
+    'use strict';
+    $.ajaxSetup({cache: true});
     Parse.FacebookUtils.init({ // this line replaces FB.init({
         appId      : '1579130992305490', // Facebook App ID
         status     : true,  // check Facebook Login status
@@ -11,24 +12,28 @@ window.fbAsyncInit = function() {
     });
  
     // Run code after the Facebook SDK is loaded.
-    FB.getLoginStatus(function(response) {
+    FB.getLoginStatus(function (response) {
         statusChangeCallback(response);
     });
 
 };
 
-(function(d, s, id){
+(function (d, s, id) {
+    'use strict';
     var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s);
+    js.id = id;
     js.src = "//connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
+    'use strict';
+    UpdateSCProgressBar("FB User Login!");
+    //console.log('statusChangeCallback');
+    //console.log(response);
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
@@ -37,17 +42,17 @@ function statusChangeCallback(response) {
         // Logged into your app and Facebook.
         Login();
     } else if (response.status === 'not_authorized') {
-        // The person is logged into Facebook, but not your app.
+        // return to main page
     } else {
-        // The person is not logged into Facebook, so we're not sure if
-        // they are logged into this app or not.
+        // return to main page
     }
 }
 
 var gruposUsuario;
 var permisosUsuario;
 
-function Login(){
+function Login () {
+    'use strict';
     /*FB.login(function(response) {
         //revisarPermisos();
         enlistarAlbums();
@@ -55,24 +60,26 @@ function Login(){
     Parse.FacebookUtils.logIn('user_photos, email', {
         success: function(user) {
                 $(".login").hide();
+                UpdateSCProgressBar("User Logged In!");
                 ListAlbums();
                 LoggedUser = user;
                 ListScrapbooks();
-            },
-        error: function(user, error) {
+        },
+        error: function (user, error) {
             alert("User cancelled the Facebook login or did not fully authorize.");
         }
     });
 }
 
-function ListAlbums(){
+function ListAlbums () {
+    'use strict';
     FB.api("/me/albums",
         function (response) {
-          if (response && !response.error) {
-            var id = 0;
-            for(var i = 0; i < response.data.length; i++)
-            {                    
-                $("#albums").append("<a href='#' class='list-group-item' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" +
+            if (response && !response.error) {
+                var pgrRate = response.data.length * 0.1;
+                for (var i in response.data) {
+                    UpdateSCProgressBar(pgrRate * i, true, "Getting User Albums");
+                    $("#albums").append("<a href='#' class='list-group-item' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" +
                                     "<span class='glyphicon glyphicon-folder-close folderIcon' aria-hidden='true'></span> " + response.data[i].name + "</a>");
             }
         }

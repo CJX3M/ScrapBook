@@ -1,4 +1,5 @@
 function cuniq(index) {
+    'use strict';
     var d = new Date(),
         m = d.getMilliseconds() + "",
         u = ++d + m + (index === 10000 ? (index = 1) : index);
@@ -6,12 +7,10 @@ function cuniq(index) {
     return u;
 }
 
-function ShowMessage(type, header, message, opt){
-    if (arguments.length < 2)
-        return;
-    var buttonsDiv = $("<div id=\"alertButtons\"></div>");
-    var timer;
-    var buttons;    
+function ShowMessage (type, header, message, opt) {
+    'use strict';
+    if (arguments.length < 2) { return; }
+    var buttonsDiv = $("<div id=\"alertButtons\"></div>"), timer, buttons;    
     switch(arguments.length){
         case 2: 
             message = header;
@@ -45,9 +44,8 @@ function ShowMessage(type, header, message, opt){
                   "</div>");    
     if(buttons !== undefined)
     {
-        if($.isArray(buttons))
-        {
-            for(var i in buttons){
+        if ($.isArray(buttons)) {
+            for (var i in buttons) {
                 var button = $("<button type=\"button\" class=\"btn btn-" + buttons[i].type + "\">" + buttons[i].text + "</button>" );
                 button.on("click", buttons[i].click);
                 buttonsDiv.append(button);
@@ -58,10 +56,11 @@ function ShowMessage(type, header, message, opt){
             buttonsDiv.append(button);
         }
     }
-    if(buttonsDiv.children().length > 0)
+    if (buttonsDiv.children().length > 0) {
         alert.append(buttonsDiv);
+    }
     $("body").prepend(alert);
-    if(timer !== undefined){
+    if (timer !== undefined) {
         alert.css({"top": "calc(10%)", "left":"calc(80%)"})
         setTimeout(function(){
             alert.alert("close");
@@ -70,9 +69,11 @@ function ShowMessage(type, header, message, opt){
     alert.alert();
 }
 
-function SetCtlState(ctl, state) {
-    if(state) 
+function SetCtlState (ctl, state) {
+    'use strict';
+    if(state) {
         ctl.addClass("active")
-    else 
+    } else { 
         ctl.removeClass("active");
+    }
 }

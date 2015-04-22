@@ -111,11 +111,38 @@
             top: calc(50%);
             left: calc(50%);
         }
+        
+        .SplashScreenBg {
+            position: fixed;
+            z-index: 2000;
+            width: calc(100%);
+            height: calc(100%);
+            background-color: gainsboro;            
+        }
+
+        .SplashScreen {
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            top: calc(35%);
+            left: calc(35%);
+        }
+        
     </style>
      <script src="js/GoogleFonts.js"></script>
 
   </head>
   <body>
+      <div class="SplashScreenBg">
+          <div class="SplashScreen">
+              <!-- img src="MyScrapBooK_Logo_HR.png" style="width:85%; height:70%" alt="My ScrapBooK Logo by Cynthia Flores" /-->
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 2%">
+                    <span style="color:black;">Cargando!</span>
+                </div>
+            </div>
+          </div>
+      </div>
     <div class="login signin_facebook" onclick="Login();">Log In</div>
     <table border="1px" width="100%">
         <tr>
@@ -211,7 +238,8 @@
                     <form>
                         <div class="form-group">
                             <label for="message-text" class="control-label">Message:</label>
-                            <textarea class="form-control" id="textContent" placeholder="Write text to insert and click on canvas where you want it"></textarea>
+                            <textarea class="form-control" id="textContent" placeholder="Write text to insert and click on canvas where you want it" 
+                                      data-toggle="tooltip" data-placement="top" title="Press Shift+Enter to Submit your text"></textarea>
                         </div>
                     </form>              
                     <nav class="navbar navbar-default">
