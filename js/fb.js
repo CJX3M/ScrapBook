@@ -1,11 +1,8 @@
 var LoggedUser;
 
-Parse.initialize("WbFkw1hALXfufg9GRO3C4lE4YEPveyB3BLZlkZKQ", "XAElZQL58DfkKoqDtgcmyr0gPlYAAeHO2RJcRljc");
-
-
-window.fbAsyncInit = function() {
-     $.ajaxSetup({cache: true});
-    initializeCanvas();
+window.fbAsyncInit = function () {
+    'use strict';
+    $.ajaxSetup({cache: true});
     Parse.FacebookUtils.init({ // this line replaces FB.init({
         appId      : '1579130992305490', // Facebook App ID
         status     : true,  // check Facebook Login status
@@ -15,47 +12,47 @@ window.fbAsyncInit = function() {
     });
  
     // Run code after the Facebook SDK is loaded.
-    FB.getLoginStatus(function(response) {
+    FB.getLoginStatus(function (response) {
         statusChangeCallback(response);
     });
 
 };
 
-(function(d, s, id){
+(function (d, s, id) {
+    'use strict';
     var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s);
+    js.id = id;
     js.src = "//connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
+    'use strict';
+    UpdateSCProgressBar("FB User Login!");
+    //console.log('statusChangeCallback');
+    //console.log(response);
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
         // Logged into your app and Facebook.
-        $(".login").hide();
-        ListAlbums();
-        if(LoggedUser == null)
-            LoggedUser = Parse.User.current();
-        ListScrapbooks();
+        Login();
     } else if (response.status === 'not_authorized') {
-        // The person is logged into Facebook, but not your app.
+        // return to main page
     } else {
-        // The person is not logged into Facebook, so we're not sure if
-        // they are logged into this app or not.
+        // return to main page
     }
 }
 
 var gruposUsuario;
 var permisosUsuario;
 
-function Login(){
+function Login () {
+    'use strict';
     /*FB.login(function(response) {
         //revisarPermisos();
         enlistarAlbums();
@@ -63,24 +60,27 @@ function Login(){
     Parse.FacebookUtils.logIn('user_photos, email', {
         success: function(user) {
                 $(".login").hide();
+                UpdateSCProgressBar("User Logged In!");
                 ListAlbums();
                 LoggedUser = user;
                 ListScrapbooks();
-            },
-        error: function(user, error) {
+        },
+        error: function (user, error) {
             alert("User cancelled the Facebook login or did not fully authorize.");
         }
     });
 }
 
-function ListAlbums(){
+function ListAlbums () {
+    'use strict';
     FB.api("/me/albums",
         function (response) {
-          if (response && !response.error) {
-            var id = 0;
-            for(var i = 0; i < response.data.length; i++)
-            {                    
-                $("#albums").append("<li style='cursor:pointer' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" + response.data[i].name + "</li>");
+            if (response && !response.error) {
+                var pgrRate = response.data.length * 0.1;
+                for (var i in response.data) {
+                    UpdateSCProgressBar(pgrRate * i, true, "Getting User Albums");
+                    $("#albums").append("<a href='#' class='list-group-item' onclick='enlistPreviews(\"" + response.data[i].id + "\", $(this));'>" +
+                                    "<span class='glyphicon glyphicon-folder-close folderIcon' aria-hidden='true'></span> " + response.data[i].name + "</a>");
             }
         }
     });
@@ -97,41 +97,46 @@ function enlistPreviews(albumId, list) {
     {
         FB.api("/" + albumId + "/photos", function(response){
             if(response && !response.error){
-                var photoList = $("<ol id='photoList' style='display:hidden'></ol>");
+                var photoList = $("<ol id='photoList' style='display:hidden; height:320px; overflow-y:scroll; list-style-type: none;padding: 0px;margin: 0px;'></ol>");
                 for(var i = 0; i < response.data.length; i++){
-                    var listItem = $("<li></li>");
-                    var pic = $("<img src='" + findThumbnail(response.data[i].images) + "' draggable=\"true\"  ondragstart=\"handleDragStart(event)\" ondragend=\"handleDragEnd(event)\">")
-                    pic.data("obj", response.data[i]);
+                    var listItem = $("<li class='imagesLst list-inline'></li>");
+                    var image = findThumbnail(response.data[i].images);
+                    var pic = $("<div><img src='" + image.source + "' " + getSizeAdjust(image) + " draggable=\"true\"  ondragstart=\"handleDragStart(event)\" ondragend=\"handleDragEnd(event)\"></div>" + 
+                                "<span>" + response.data[i].name + "</span>")
+                    pic.find("img").data("obj", response.data[i]);
                     listItem.append(pic);
                     photoList.append(listItem);
                 }
                 list.append(photoList);
                 list.addClass("expanded");
+                list.find('.folderIcon').toggleClass("glyphicon-folder-close").toggleClass("glyphicon-folder-open");
                 list.find("#photoList").show("slow");
             }
         })
     }else{
-        /*if(list.hasClass("expanded")){
-            list.removeClass("expanded");
-            list.find("#photoList").hide("fast");
-        }else{
-            list.addClass("expanded");
-            list.find("#photoList").show("slow");
-        }*/
         list.toggleClass('expanded');
+        list.find('.folderIcon').toggleClass("glyphicon-folder-close").toggleClass("glyphicon-folder-open");
         list.find("#photoList").toggle();
     };
 }
 
 function findThumbnail(images) {
-    var source, smallestWidth;
+    var source, smallestWidth, retImage;
+    retImage = images[0];
     smallestWidth = images[0].width;
     source = images[0].source;
     for(var i = 1; i < images.length; i++){
         if(smallestWidth > images[i].width){
             smallestWidth = images[i].width;
-            source = images[i].source;
+            retImage = images[i];
         }
     }
-    return source;
+    return retImage;
+}
+
+function getSizeAdjust(image){
+    var style = "style='width: calc(100% - 20px);height: auto;'";
+    if(image.width < image.height)
+        style = "style='height: calc(100% - 10px);width: auto;'";
+    return style;
 }

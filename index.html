@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My ScrapBook</title>
 	
-      <!-- Bootstrap -->
-      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">      
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/scrapbook.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <!--[if IE 7]><link rel="stylesheet" href="css/scrapbook-ie7.css"><![endif]-->
+      
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -36,110 +42,330 @@
             -webkit-user-drag: element;
             cursor: move;
         }
+        
+        .imagesLst {
+            box-sizing: border-box;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            background-image: -webkit-linear-gradient(rgba( 8, 253, 89, 1), rgba( 97, 229, 219, 1));
+            background-image: linear-gradient(rgba( 8, 253, 89, 1),rgba( 97, 229, 219, 1));
+            border-radius: 14px;
+            box-shadow: 5px 5px 4px 2px #757575;
+            filter: hue-rotate(10deg);
+            transform-origin: 46% 50%;
+            -moz-box-sizing: border-box;
+            -webkit-filter: hue-rotate(10deg);
+            -webkit-transform-origin: 46% 50%;
+            margin: 2px;
+            float: left;
+        }
+        
+        .imagesLst > div {
+            width: 90%;
+            height: 70%;
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 8%;
+            background-color: aliceblue;
+            border-radius: 15px;
+        }
+        
+        .imagesLst > div > img {
+            display: block;
+            margin: auto;
+            border-radius: 10px
+        }
+        
+        .imagesLst > span {
+            width: 90%;
+            height: 90%;
+            display: flex;
+            margin: auto;
+        }
+        
+        .contextMenu{                
+            position:absolute;     
+            display: none;
+            width: 120px;
+            font-size: 10px;
+            padding: 2px;
+        }
+        
+        .contextMenu > a:not(:first-child) {
+            border-top: 0px;
+        }
+        
+        .alert-box {
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+            border: 1px solid #999;
+            border: 1px solid rgba(0,0,0,.2);
+            border-radius: 6px;
+            outline: 0;
+            -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+            box-shadow: 0 3px 9px rgba(0,0,0,.5);
+            position: absolute;
+            z-index: 1000;
+            top: calc(50%);
+            left: calc(50%);
+        }
+        
+        .SplashScreenBg {
+            position: fixed;
+            z-index: 2000;
+            width: calc(100%);
+            height: calc(100%);
+            background-color: gainsboro;            
+        }
+
+        .SplashScreen {
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            top: calc(35%);
+            left: calc(35%);
+        }
+        
     </style>
-      
-    <!-- Fonts script -->
-    <script src="js/ScrapFonts.js"></script>
+     <script src="js/GoogleFonts.js"></script>
+
   </head>
   <body>
+      <div class="SplashScreenBg">
+          <div class="SplashScreen">
+              <!-- img src="MyScrapBooK_Logo_HR.png" style="width:85%; height:70%" alt="My ScrapBooK Logo by Cynthia Flores" /-->
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 2%">
+                    <span style="color:black;">Cargando!</span>
+                </div>
+            </div>
+          </div>
+      </div>
     <div class="login signin_facebook" onclick="Login();">Log In</div>
-    <table border="1px" width=100%>
+    <table border="1px" width="100%">
         <tr>
             <!-- albums/pictures list -->
-            <td width="30%">
-                <ol id='albums' style="height:890px; width=100%; overflow-y: auto;"></ol>
+            <td width="45%">
+                <div role="tabpanel" style="height:890px; overflow-y: auto;">
+
+                  <!-- Nav tabs -->
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#bookLst" aria-controls="bookLst" role="tab" data-toggle="tab">Book List</a></li>
+                    <li role="presentation"><a href="#albumLst" aria-controls="albumLst" role="tab" data-toggle="tab">Albums</a></li>
+                    <li role="presentation"><a href="#stickerLst" aria-controls="stickerLst" role="tab" data-toggle="tab">Stickers</a></li>
+                    <li role="presentation"><a href="#elementsLst" aria-controls="elementsLst" role="tab" data-toggle="tab">Canvas Elements</a></li>
+                  </ul>
+
+                  <!-- Tab panes -->
+                  <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="bookLst">
+                        <div id="scrapBookLst" class="list-group"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="albumLst">
+                        <div id="albums" class="list-group"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="stickerLst">
+                        <div id="stickers" class="list-group"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="elementsLst">
+                        <div id="elements" class="list-group"></div>
+                    </div>
+                  </div>
+
+                </div>
             </td>
             <!-- canvas -->
-            <td width="80%" rowspan="2">
-                <div id='toolBox' class="btn-toolbar" role="toolbar" arial-label="Text Toolbar">
-                    <button id='addText' class="btn btn-default btn-xs" type="button" onclick="SetText(this);">Add Text</button>
-                    <div class="btn-group btn-group-xs" role="group" aria-label="Font Normal Options">
-                        <button id="selFontFamily" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true" style="width:150px; text-align:initial">
-                            <table width="100%">
-                                <tr>
-                                    <td style="width:95%;overflow:hidden">
-                                        <span id="selFont">[Select the Font to Use]</span>
-                                    </td>
-                                    <td>
-                                        <span class="caret"></span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </button>
-                        <ul id="selFontFamilyLst" class="dropdown-menu" role="menu" aria-labelledby="selFontFamily">
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Arial, Helvetica, sans-serif" onclick="SetFont(this);">Arial</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Comic Sans MS, cursive, sans-serif" onclick="SetFont(this);">Comic Sans</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Impact, Charcoal, sans-serif" onclick="SetFont(this);">Impact</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Sans Unicode, Lucida Grande, sans-serif" onclick="SetFont(this);">Lucida</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Tahoma, Geneva, sans-serif" onclick="SetFont(this);">Tahoma</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Trebuchet MS, Helvetica, sans-serif" onclick="SetFont(this);">Trebuchet</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Verdana, Geneva, sans-serif" onclick="SetFont(this);">Verdana</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Georgia, serif" onclick="SetFont(this);">Georgia</a></option>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Courier New, Courier, monospace" onclick="SetFont(this);">Courier New</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Console, Monaco, monospace" onclick="SetFont(this);">Lucida Console</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Times New Roman, Times, serif" onclick="SetFont(this);">Times New Roman</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lobster, cursive" onclick="SetFont(this);">Lobster</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Cherry Cream Soda, cursivew" onclick="SetFont(this);">Cherry Cream Soda</a></li>
-                        </ul>
-                        <button id='boldText' class="btn btn-default" style="font-weigth:bold" onclick="SetToggleButton(this);" type="button">B</button>
-                        <button id='italicText' class="btn btn-default" style="font-style:italic" onclick="SetToggleButton(this);" type="button">I</button>
-                        <button id='underlineText' class="btn btn-default" style="text-decoration: underline;" onclick="SetToggleButton(this);" type="button">U</button>
-                        <button id='strokeText' class="btn btn-default" style="text-decoration: line-through;" onclick="SetToggleButton(this);" type="button">S</button>
-                        <button id='overlineText' class="btn btn-default" style="text-decoration: overline;" onclick="SetToggleButton(this);" type="button">O</button>
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-addon">Text Color:</span>
-                            <input id='textColor' class="btn btn-default btn-xs" type="color"/>                        
+            <td width="80%">
+                <button id="addText" class="btn btn-default btn-xs" type="button" onclick="SetText(this);">Add Text</button>
+                <div class="form-inline">
+                    <div id="selBookPage" class="input-group input-group-sm" style="width: 10%">
+                        <span class="input-group-addon">Page No.</span>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <span id="selPage">1</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="selPageMenu" class="dropdown-menu" role="menu">
+                            </ul>
                         </div>
                     </div>
-                    <div class="form-group form-inline" arial-label="Special Text Options">
-                        <button id='shadowText' class="btn btn-default btn-xs" style="text-shadow: 2px 2px #ff0000;" type="button" onclick="ToggleShadowOptions(this);">S</button>
-                        <div id='shadowTextOptions' class="form-group" style="display:none">
-                            <input id='txtShadowWidth' class="form-control input-sm" type='number' style="width:120px;" placeholder="Shadow Width"/>
-                            <input id='txtShadowLeft' class="form-control input-sm" type='number' style="width:60px;" placeholder="Left"/>
-                            <input id='txtShadowTop' class="form-control input-sm" type='number' style="width:60px;" placeholder="Top"/>
-                            <div class="form-group">
-                                Shadow Color:
-                                    <input id='shadowColor' class="btn btn-default btn-xs" type="color"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            Outline Color:
-                            <input id='outlineColor' class="btn btn-default btn-xs" type="color"/>
-                        </div>
-                        <input id='txtOutlineWidth' type='number' class="form-control input-sm" style="width:120px;" placeholder="Outline Weight"/>
-                    </div>
+                    <button id="btnAddPage" type="button" class="btn btn-info" onclick="AddPage()">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Page
+                    </button>
+                    <button id="btnClearPage" type="button" class="btn btn-success" onclick="ClearPage()">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Clear Page
+                    </button>
                 </div>
-                <div id='canvas-wrapper'>
-                    <canvas id='canvas' width="780px" height="890px" style="border: 1px solid red;"></canvas>
+                <div id="canvas-wrapper">
+                    <canvas id="canvas" width="780px" height="890px" style="border: 1px solid red;"></canvas>
                 </div>                
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <ol id="scrapBookLst">
-                </ol>
             </td>
         </tr>
         <tr valign="center">
             <td colspan="2" align="right">
-                <button id="btnSavePage" type="button" class="btn btn-success" onclick="SavePage()">Save Page</button>
-                <button id="btnSaveBook" type="button" class="btn btn-success" onclick="SaveBook()">Save Book</button>
-                <button id="btnClearPage" type="button" class="btn btn-success" onclick="ClearPage()">Clear</button>
+                <button id="btnSaveBook" type="button" class="btn btn-success" onclick="SaveBook()">
+                    <span class="icon-floppy" aria-hidden="true"></span>
+                     Save Book
+                </button>
             </td>
         </tr>
     </table>
+    <ul class="contextMenu dropdown-menu" role="menu" id="contextMenu">
+        <li role="presentation"><a href="#" role="menuitem" id="optGroup" onclick="ContextMenuOpt('group')"><span class="" aria-hidden="true"></span> Group</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optUngroup" onclick="ContextMenuOpt('ungroup')"><span class="" aria-hidden="true"></span> Un Group</a></li>
+        <li role="presentation" class="divider"></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optCut" onclick="ContextMenuOpt('cut')"><span class="icon-scissors" aria-hidden="true"></span> Cut</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optCopy" onclick="ContextMenuOpt('copy')"><span class="icon-docs" aria-hidden="true"></span> Copy</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optPaste" onclick="ContextMenuOpt('paste')"><span class="icon-paste" aria-hidden="true"></span> Paste</a></li>
+        <li role="presentation" class="divider"></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optEditText" onclick="ContextMenuOpt('edit')"><span class="icon-edit" aria-hidden="true"></span> Edit</a></li>
+        <li role="presentation" class="divider"></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optMoveFwd" onclick="ContextMenuOpt('movefwd')"><span class="" aria-hidden="true"></span> Move Forward</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optMoveBck" onclick="ContextMenuOpt('movebwd')"><span class="" aria-hidden="true"></span> Move Back</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optBringFwd" onclick="ContextMenuOpt('tofrnt')"><span class="" aria-hidden="true"></span> Bring to Front</a></li>
+        <li role="presentation"><a href="#" role="menuitem" id="optSendBck" onclick="ContextMenuOpt('tobk')"><span class="" aria-hidden="true"></span> Send to Back</a></li>
+    </ul>
+    <div class="modal fade" id="textOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Text Options</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Message:</label>
+                            <textarea class="form-control" id="textContent" placeholder="Write text to insert and click on canvas where you want it" 
+                                      data-toggle="tooltip" data-placement="top" title="Press Shift+Enter to Submit your text"></textarea>
+                        </div>
+                    </form>              
+                    <nav class="navbar navbar-default">
+                        <div class="container-fluid">
+                            <div class="collapse navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <button id="selFontFamily" class="btn btn-default dropdown-toggle btn-xs" type="button" data-toggle="dropdown" aria-expanded="true" style="width:150px; text-align:initial">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td style="width:95%;overflow:hidden">
+                                                        <span id="selFont">[Select the Font to Use]</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="caret"></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </button>
+                                        <ul id="selFontFamilyLst" style="height:250px; overflow-y:scroll;" class="dropdown-menu" role="menu" aria-labelledby="selFontFamily">
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Arial, Helvetica, sans-serif" onclick="SetFont(this);">Arial</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Comic Sans MS, cursive, sans-serif" onclick="SetFont(this);">Comic Sans</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Impact, Charcoal, sans-serif" onclick="SetFont(this);">Impact</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Sans Unicode, Lucida Grande, sans-serif" onclick="SetFont(this);">Lucida</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Tahoma, Geneva, sans-serif" onclick="SetFont(this);">Tahoma</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Trebuchet MS, Helvetica, sans-serif" onclick="SetFont(this);">Trebuchet</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Verdana, Geneva, sans-serif" onclick="SetFont(this);">Verdana</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Georgia, serif" onclick="SetFont(this);">Georgia</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Courier New, Courier, monospace" onclick="SetFont(this);">Courier New</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Console, Monaco, monospace" onclick="SetFont(this);">Lucida Console</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Times New Roman, Times, serif" onclick="SetFont(this);">Times New Roman</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>    
+                                        <div id="toolBox" class="btn-toolbar" role="toolbar" arial-label="Text Toolbar">
+                                            <div class="btn-group btn-group-xs" role="group" aria-label="Font Normal Options" data-toggle="buttons">
+                                                <label class="btn btn-default">
+                                                    <input id="boldText" autocomplete="off" type="checkbox"/>
+                                                    <span class="icon-bold"></span>
+                                                </label>
+                                                <label class="btn btn-default">
+                                                    <input id="italicText" autocomplete="off" type="checkbox"/>
+                                                    <span class="icon-italic"></span>
+                                                </label>
+                                                <label class="btn btn-default">
+                                                    <input id="underlineText" autocomplete="off" type="checkbox"/>
+                                                    <span class="icon-underline"></span>
+                                                </label>
+                                                <label class="btn btn-default">                    
+                                                    <input id="strokeText" autocomplete="off" type="checkbox"/>
+                                                    <span class="icon-strike"></span>
+                                                </label>
+                                                <label class="btn btn-default" style="text-decoration: overline;">                
+                                                    <input id="overlineText" autocomplete="off" type="checkbox"/>O
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <form class="navbar-form navbar-left">
+                                    <div class="input-group input-group-sm" style="width:1%">
+                                        <span class="input-group-addon icon-fontsize"></span>
+                                        <input id="txtFontSize" type="number" class="form-control" style="width:60px;" value="40" />
+                                    </div>
+                                    <div class="input-group input-group-sm" style="width:1%">
+                                        <span class="input-group-addon icon-tint"></span>
+                                        <div class="input-group-btn">
+                                            <input id="textColor" class="btn btn-default btn-xs" type="color"/>                        
+                                        </div>
+                                    </div>
+                                </form>
+                                <form class="navbar-form navbar-left">
+                                    <div class="form-group" data-toggle="buttons" >
+                                        <label class="btn btn-default btn-xs" style="text-shadow: 2px 2px 2px #FF0000">
+                                            <input id="shadowText" autocomplete="off" type="checkbox" onchange="ToggleShadowOptions()"/>S
+                                        </label>
+                                    </div>
+                                    <div id="shadowTextOptions" class="form-group" style="display:none">
+                                        <div class="input-group input-group-sm" style="width:1%">
+                                            <span class="input-group-addon">Shadow Width:</span>
+                                            <input id="txtShadowWidth" class="form-control" type="number" style="width:60px;" placeholder="Shadow Width" value="0" />
+                                        </div>
+                                        <input id="txtShadowLeft" class="form-control input-sm" type="number" style="width:60px;" placeholder="Left"/>
+                                        <input id="txtShadowTop" class="form-control input-sm" type="number" style="width:60px;" placeholder="Top"/>
+                                        <div class="input-group input-group-sm" style="width: 10%">
+                                            <span class="input-group-addon">Shadow Color:</span>
+                                            <div class="input-group-btn">
+                                                <input id="shadowColor" class="btn btn-default btn-xs" type="color"/>                                    
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group input-group-sm" style="width: 10%">
+                                        <span class="input-group-addon">Outline Color:</span>
+                                        <div class="input-group-btn">
+                                            <input id="outlineColor" class="btn btn-default" type="color"/>
+                                        </div>
+                                    </div>
+                                    <input id="txtOutlineWidth" type="number" class="form-control input-sm" style="width:120px;" placeholder="Outline Weight"/>
+                                </form>
+                            </div>  
+                        </div>
+                    </nav>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="AddText();">Set Text</button>
+                </div>
+            </div>
+        </div>
+    </div>      
     <!-- fabric framework necesary to create, store and load scrapbooks --> 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js"></script>
+    <!-- fabric extension, customs fabric goes here --> 
+    <script src="js/fabric.canvasex.js"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <!-- Include Parse library -->
     <script src="//www.parsecdn.com/js/parse-1.3.5.min.js"></script>
     <!-- Include the main script for Parse actions --> 
     <!-- script src="../cloud/main.js"></script-->
     <!-- FB Main script -->
     <script src="js/fb.js"></script>
+    <!-- Utils script -->
+    <script src="js/Utils.js"></script>
     <!-- Main script -->
     <script src="js/ScrapMain.js"></script>
     <!-- ScrapBook -->
@@ -148,5 +374,7 @@
     <script src="js/ScrapUser.js"></script>
     <!-- ScrapPage -->
     <script src="js/ScrapPage.js"></script>
+    <!-- Fonts script -->
+    <script src="js/ScrapFonts.js"></script>
   </body>
 </html>
