@@ -13,10 +13,10 @@
 + Opciones de edición de objeto seleccionado
 + Crear sitio de administración
 + Crear clase ScrapFonts
-- Crear clase ScrapStickers
++ Crear clase ScrapStickers
 + Interface de administración de ScrapFonts
-- Interface de administración de ScrapStickers
-- Crear Clase ScrapTemplates
++ Interface de administración de ScrapStickers
++ Crear Clase ScrapTemplates
 - Interface de administración de Templates
 - Interface de Administración de usuarios
 - Interface de administración de ScrapBooks
@@ -31,6 +31,7 @@
 + Ajustar posicionamiento de agrupado/desagrupado
 + Ajustar SendToBack. Ya no puedes editar el elemento
 + Agregar loading splashscreen
+- Prueba completa de un ScrapBook
 
 # Notas de TODO's
 - Z-Index es modificable por métodos de canvas

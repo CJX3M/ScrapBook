@@ -50,7 +50,19 @@
             </div>            
         </div>
         <div role="tabpanel" class="tab-pane" id="stickerLst">
-            <div id="stickers" class="list-group"></div>
+            <div id="stickerLst" class="list-group" style="float:left;width:340px; height:320px;overflow-y:scroll"></div>
+            <div id="scrapStickerDetails" class="form-group" style="width:320px; display:inline-block">
+                <button id="btnAddFont" type="button" class="btn btn-info" onclick="NewSticker()">New Font</button>
+                <div class="input-group">
+                    <div class="input-group-addon">Title: </div>
+                    <input id="txtStickerTitle" type="text" class="form-control"/>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Url: </div>
+                    <input id="txtStickerUrl" type="text" class="form-control"/>
+                </div>
+                <button id="btnSaveStk" type="button" class="btn btn-success" onclick="SaveSticker()">Save Sticker</button>
+            </div>
         </div>
       </div>
 
