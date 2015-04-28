@@ -3,7 +3,7 @@ var ScrapBook = Parse.Object.extend("Scrapbook", {
     user : {},
     pages: [],
     AddPage: function(page) {
-        if($.inArray(this.pages, page))
+        if(!$.inArray(this.pages, page))
         {
             this.pages.push(page);
             page.ScrapBook = this;
