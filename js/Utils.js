@@ -17,11 +17,11 @@ function ShowMessage (type, header, message, opt) {
             header = "";
             break;
         case 3:
-            if(typeof message !== "string")
+            if (typeof message !== "string")
             {
-                if($.isPlainObject(message) || $.isArray(message))
+                if ($.isPlainObject(message) || $.isArray(message))
                     buttons = message;
-                else if($.isNumeric(message))
+                else if ($.isNumeric(message))
                 {
                     timer = message;
                     buttons = undefined;
@@ -31,7 +31,7 @@ function ShowMessage (type, header, message, opt) {
             }
             break;
         case 4: 
-            if($.isNumeric(opt))
+            if ($.isNumeric(opt))
                 timer = opt;
             else
                 buttons = opt;
@@ -44,14 +44,15 @@ function ShowMessage (type, header, message, opt) {
                   "</div>");    
     if(buttons !== undefined)
     {
+        var button;
         if ($.isArray(buttons)) {
             for (var i in buttons) {
-                var button = $("<button type=\"button\" class=\"btn btn-" + buttons[i].type + "\">" + buttons[i].text + "</button>" );
+                button = $("<button type=\"button\" class=\"btn btn-" + buttons[i].type + "\">" + buttons[i].text + "</button>" );
                 button.on("click", buttons[i].click);
                 buttonsDiv.append(button);
             }
         } else {
-            var button = $("<button type=\"button\" class=\"btn btn-" + buttons.type + "\">" + buttons.text + "</button>" );
+            button = $("<button type=\"button\" class=\"btn btn-" + buttons.type + "\">" + buttons.text + "</button>" );
             button.on("click", buttons.click);
             buttonsDiv.append(button);
         }
@@ -62,7 +63,7 @@ function ShowMessage (type, header, message, opt) {
     $("body").prepend(alert);
     if (timer !== undefined) {
         alert.css({"top": "calc(10%)", "left":"calc(80%)"})
-        setTimeout(function(){
+        setTimeout(function () {
             alert.alert("close");
         }, timer);
     }

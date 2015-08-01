@@ -121,9 +121,10 @@ function initializeCanvas() {
                 currentObjectTarget = undefined;
             }
         }
-    UpdateSCProgressBar();
+        UpdateSCProgressBar();
     });
     $("#textContent").on("keydown", EnterMessage);
+    NewBook();
 }
 
 /* 
@@ -331,6 +332,7 @@ function NewBook() {
         AddPage();
     }
     currentLoadedBook.AddPage(currentPage);
+    CreatePageSelector();
     LoadPage(1);
 }
 
@@ -338,6 +340,7 @@ function AddPage() {
     SavePage();
     currentPage = new ScrapPage();
     currentLoadedBook.AddPage(currentPage);
+    AddPageToSelector(currentPage.pageNo);
     LoadPage(currentPage.pageNo);
 }
 
@@ -349,7 +352,9 @@ function SavePage() {
     }
 }
 
-function SaveBook() {    
+function SaveBook() {
+    if(currentLoadedBook === null || currentLoadedBook === undefined)
+        NewBook();    
     currentLoadedBook.Save(ListScrapbooks);
 }
 
@@ -381,27 +386,50 @@ function ClearPage() {
     canvas.add(rect);*/
 }
 
+function DeletePage() {
+    if (currentPage !== null || currentPage !== undefined) {
+        if(currentLoadedBook.pages.length === 1)
+            ClearPage();
+        else {
+            currentLoadedBook.RemovePage(currentPage);
+            CreatePageSelector();
+            var removedPageNo = currentPage.pageNo;
+            delete currentPage;
+            LoadPage(removedPageNo - 1);
+        }
+   }
+}
+
 function LoadBook(index) {
     currentLoadedBook = LoggedUser.ScrapBooks[index];
-    $("#selPageMenu").empty();
-    $("#selPage").text('');
-    for(var i = 0; i < currentLoadedBook.pages.length; i++)
-    {
-        var index = i + 1;
-        var pageNo = $("<li><a href='#' onclick='LoadPage(" + index + ")'>" + index + "</a></li>")
-        $("#selPageMenu").append(pageNo);
-    }
+    CreatePageSelector();
     if (currentLoadedBook.pages.length > 0)
         LoadPage(1);
 }
 
 function LoadPage(index) {
+    if (index <= 0)
+        index = 1;
     SavePage();
     currentPage = currentLoadedBook.pages[index - 1];
     $("#selPage").text(index);
     canvas.loadFromJSON(currentPage.data, function (){
         canvas.renderAll();
     });
+}
+
+function CreatePageSelector() {
+    $("#selPageMenu").empty();
+    $("#selPage").text('');
+    for(var i = 0; i < currentLoadedBook.pages.length; i++)
+    {
+        AddPageToSelector(i + 1);
+    }    
+}
+
+function AddPageToSelector(index) {
+    var pageNo = $("<li><a href='#' onclick='LoadPage(" + index + ")'>" + index + "</a></li>")
+    $("#selPageMenu").append(pageNo);
 }
 
 function EnlistElements() {

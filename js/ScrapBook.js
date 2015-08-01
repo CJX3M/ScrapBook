@@ -3,12 +3,18 @@ var ScrapBook = Parse.Object.extend("Scrapbook", {
     user : {},
     pages: [],
     AddPage: function(page) {
-        if(!$.inArray(this.pages, page))
+        if(page.pageNo === 0)
         {
             this.pages.push(page);
             page.ScrapBook = this;
             page.pageNo = this.pages.length;
         }
+    },
+    RemovePage: function(page) {
+        this.pages.splice(page.pageNo - 1, 1);
+        for(var i = 0; i < this.pages.length; i++) {
+            this.pages[i].pageNo = i + 1;   
+        }  
     },
     Save: function(callBack) {
         this.save({
