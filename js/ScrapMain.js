@@ -1,4 +1,6 @@
 var canvas;
+var canvasCurvedPreview;
+var previewCurvText;
 var imageTransfer;
 var currentLoadedBook;
 var currentPage;
@@ -23,12 +25,14 @@ $(window).load(function () {
 function initializeCanvas() {
     'use strict';
     canvas = new fabric.CanvasEx('canvas');
+    canvasCurvedPreview = new fabric.Canvas('curvedTextPreview');
     UpdateSCProgressBar(40, "Setting Up Canvas");
     canvas.images = 0;
     canvas.texts = 0;
     canvas.stickers = 0;
     canvas.groups = 0;
     canvas.on("after:render", function () { canvas.calcOffset(); });
+    canvasCurvedPreview.on("after:render", function () { canvasCurvedPreview.calcOffset(); });
     UpdateSCProgressBar();
     canvas.on('mouse:down', function (options) {
         if(options.target === undefined)
@@ -121,8 +125,8 @@ function initializeCanvas() {
                 currentObjectTarget = undefined;
             }
         }
-        UpdateSCProgressBar();
     });
+    UpdateSCProgressBar();
     $("#textContent").on("keydown", EnterMessage);
     NewBook();
 }
@@ -204,11 +208,45 @@ function SetObjectId(canvasObject) {
     canvasObject.id = canvasObject.type === "image" ? "I" + cuniq(++canvas.images) 
         : canvasObject.type === "sticker" ? "S" + cuniq(++canvas.stickers) 
         : canvasObject.type === "text" ? "T" + cuniq(++canvas.texts) 
+        : canvasObject.type === "curvedText" ? "CT" + cuniq(++canvas.texts) 
         : canvasObject.type === "group" ? "G" + cuniq(++canvas.groups) : "";
 }
 
 function ToggleShadowOptions() {
     $("#shadowTextOptions").toggle();
+}
+
+function ToggleCurvedTextOptions() {
+    $("#curvedTextOptions").toggle();
+    if ($("#curvedTextOptions").is(":visible") && previewCurvText === undefined) {
+        var params = {
+            left: 0,
+            top: 0,
+            radius: 100,
+            spacing: 10,
+            reversed: false,
+            textAlign: 'center'
+        };
+        
+        previewCurvText = new fabric.CurvedText($("#textContent").val() !== "" 
+                                                ? $("#textContent").val() 
+                                                : 'Previsualizar', params);
+        
+        canvasCurvedPreview.add(previewCurvText).renderAll();
+
+        $('.radius, .spacing, .textAlign').change(function() {
+            previewCurvText.set( $(this).attr('class').split(' ')[0], $(this).val() );
+            canvasCurvedPreview.renderAll();
+        });
+        $('.reverse').change(function() {
+            previewCurvText.set('reverse', ( $(this).val() == 'true' ));
+            canvasCurvedPreview.renderAll();
+        });
+        $('#textContent').keyup(function() {
+            previewCurvText.setText($(this).val(), GetTextParams());
+            canvasCurvedPreview.renderAll();
+        });
+    }
 }
 
 function ListTextFonts() {
@@ -265,8 +303,45 @@ function SetFont(option) {
 }
 
 function AddText() {
-    var text = currentObjectTarget.target.type === "text" ? currentObjectTarget.target : new fabric.Text("", {});
-    var textParams = {
+    var textParams = GetTextParams();
+    if (!$("#curvedTextOptions").is(":visible")) {
+        var text = currentObjectTarget.target.type === "text" 
+            ? currentObjectTarget.target 
+            : new fabric.Text($("#textContent").val(), textParams);
+    } else {
+        var curvParams = {
+            radius: $('.radius').val(),
+            spacing: $('.spacing').val(),
+            reversed: $('.reverse').val() == 'true',
+            textAlign: $('.textAlign').val()
+        };
+        var text = currentObjectTarget.target.type === "curvedText" 
+            ? currentObjectTarget.target 
+            : new fabric.CurvedText($("#textContent").val(), curvParams);        
+        text.set('left', currentObjectTarget.e.layerX - text.width / 2);
+        text.set('top', currentObjectTarget.e.layerY - text.height / 2);
+        text.setText($("#textContent").val(), textParams);
+    }
+    if (currentObjectTarget.target.type === "canvas") {
+        SetObjectId(text);
+        canvas.add(text);
+        text.on('object:dblclick', function (options) {
+            options.target = this;
+            currentObjectTarget = options;
+            ShowEditTextModal(options.target);
+        });
+    } else {
+        var span = $("#elements").find("#" + canvas.getActiveObject().id + " > span");
+        $("#elements").find("#" + canvas.getActiveObject().id).empty().append(span).append(" " + canvas.getActiveObject().text);
+    }
+    $("#addText").removeClass('active');
+    $("#textOptions").modal("hide");
+    canvas.defaultCursor = "default";
+    canvas.renderAll();
+}
+
+function GetTextParams() {
+    return {
         fontWeight: $("#boldText").parent().hasClass('active') ? 'bold' : 'normal',
         textDecoration: ($("#strokeText").parent().hasClass('active') ? 'line-through' : '') + 
         ($("#underlineText").parent().hasClass('active') ? ' underline' : '') + 
@@ -279,33 +354,8 @@ function AddText() {
         strokeWidth: $("#txtOutlineWidth").val(),
         fontFamily: $("#selFont").val() || 'Arial',
         fill: $("#textColor").val(),
-        fontSize: $("#txtFontSize").val(),
-        text: $("#textContent").val(),
+        fontSize: $("#txtFontSize").val()
     };
-    text.set(textParams);
-    if (currentObjectTarget.target.type === "canvas")
-    {
-        text.set({
-            left: currentObjectTarget.e.layerX - text.width / 2,
-            top: currentObjectTarget.e.layerY - text.height / 2,
-        })
-        SetObjectId(text);
-        canvas.add(text);
-        text.on('object:dblclick', function (options) {
-            options.target = this;
-            currentObjectTarget = options;
-            ShowEditTextModal(options.target);
-        });
-    }
-    else
-    {
-        var span = $("#elements").find("#" + canvas.getActiveObject().id + " > span");
-        $("#elements").find("#" + canvas.getActiveObject().id).empty().append(span).append(" " + canvas.getActiveObject().text);
-    }
-    $("#addText").removeClass('active');
-    canvas.defaultCursor = "default";
-    $("#textOptions").modal("hide");
-    canvas.renderAll();
 }
 
 function ListScrapbooks() {
@@ -323,8 +373,7 @@ function AddScrapBookToLst() {
 }
 
 function NewBook() {
-    if (currentLoadedBook === null || currentLoadedBook === undefined)
-    {
+    if (currentLoadedBook === null || currentLoadedBook === undefined) {
         currentLoadedBook = new ScrapBook();
         currentLoadedBook.user = LoggedUser;
         currentLoadedBook.pages = [];
@@ -349,6 +398,7 @@ function SavePage() {
         currentPage.data = JSON.stringify(canvas);
         if (currentPage.ScrapBook === null || currentPage.ScrapBook === undefined)
             currentPage.ScrapBook = currentLoadedBook;
+        currentPage.Save();
     }
 }
 
@@ -478,40 +528,41 @@ function ShowContextMenu() {
     contextMenu.find("optSendBck").show();  
     contextMenu.find(".divider").show();
     switch(currentObjectTarget.target.type) {
-            case "rect":
-                contextMenu.find("li").addClass("disabled");
-                break;
-            case "text": 
-                contextMenu.find("#optEditText").show();
-                contextMenu.find("#optGroup").hide();
-                contextMenu.find("#optUngroup").hide();
-                contextMenu.find(".divider:first").hide();
-                contextMenu.find(".divider:last").show();
-                break;
-            case "image": 
-                contextMenu.find("#optEditText").hide();
-                contextMenu.find("#optGroup").hide();
-                contextMenu.find("#optUngroup").hide();
-                contextMenu.find(".divider:first").hide();
-                contextMenu.find(".divider:last").show();
-                break;
-            case "group": 
-                contextMenu.find("#optEditText").hide();
-                contextMenu.find("#optGroup").show();
-                contextMenu.find("#optUngroup").show();
-                contextMenu.find(".divider:first").show();
-                contextMenu.find(".divider:last").hide();            
-                break;
-            default:
-                contextMenu.find("#optEditText").hide();
-                contextMenu.find("#optGroup").hide();
-                contextMenu.find("#optUngroup").hide();
-                contextMenu.find("#optMoveFwd").hide();
-                contextMenu.find("#optMoveBck").hide();
-                contextMenu.find("#optBringFwd").hide();
-                contextMenu.find("#optSendBck").hide();
-                contextMenu.find(".divider").hide();
-                break;
+        case "rect":
+            contextMenu.find("li").addClass("disabled");
+            break;
+        case "text":
+        case "curvedText":
+            contextMenu.find("#optEditText").show();
+            contextMenu.find("#optGroup").hide();
+            contextMenu.find("#optUngroup").hide();
+            contextMenu.find(".divider:first").hide();
+            contextMenu.find(".divider:last").show();
+            break;
+        case "image": 
+            contextMenu.find("#optEditText").hide();
+            contextMenu.find("#optGroup").hide();
+            contextMenu.find("#optUngroup").hide();
+            contextMenu.find(".divider:first").hide();
+            contextMenu.find(".divider:last").show();
+            break;
+        case "group": 
+            contextMenu.find("#optEditText").hide();
+            contextMenu.find("#optGroup").show();
+            contextMenu.find("#optUngroup").show();
+            contextMenu.find(".divider:first").show();
+            contextMenu.find(".divider:last").hide();            
+            break;
+        default:
+            contextMenu.find("#optEditText").hide();
+            contextMenu.find("#optGroup").hide();
+            contextMenu.find("#optUngroup").hide();
+            contextMenu.find("#optMoveFwd").hide();
+            contextMenu.find("#optMoveBck").hide();
+            contextMenu.find("#optBringFwd").hide();
+            contextMenu.find("#optSendBck").hide();
+            contextMenu.find(".divider").hide();
+            break;
     }
     if (!clipboardObject)
         contextMenu.find("#optPaste").parent().addClass("disabled");
