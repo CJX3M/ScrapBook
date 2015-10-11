@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My ScrapBook</title>
-	
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">      
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/scrapbook.css">
-    <link rel="stylesheet" href="css/animation.css">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>My ScrapBook</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/scrapbook.css">
+        <link href="css/roboto.css" rel="stylesheet">
+        <link href="css/material.css" rel="stylesheet">
+        <link href="css/ripples.css" rel="stylesheet">      
+        <link rel="stylesheet" href="css/animation.css">
     <!--[if IE 7]><link rel="stylesheet" href="css/scrapbook-ie7.css"><![endif]-->
       
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -128,6 +128,14 @@
             left: calc(35%);
         }
         
+        .form-inline > * {
+            float: left;
+            margin: 0 2%;
+        }
+        
+        .input-group-btn .btn {
+            margin-left: 5px;
+        }
     </style>
      <script src="js/GoogleFonts.js"></script>
 
@@ -178,12 +186,12 @@
             </td>
             <!-- canvas -->
             <td width="55%">
-                <button id="addText" class="btn btn-default btn-xs" type="button" onclick="SetText(this);">Add Text</button>
+                <button id="addText" class="btn btn-default btn-raised btn-xs" type="button" onclick="SetText(this);">Add Text</button>
                 <div class="form-inline">
                     <div id="selBookPage" class="input-group input-group-sm" style="width: 10%">
                         <span class="input-group-addon">Page No.</span>
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-default btn-raised dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span id="selPage">1</span>
                                 <span class="caret"></span>
                             </button>
@@ -191,13 +199,13 @@
                             </ul>
                         </div>
                     </div>
-                    <button id="btnAddPage" type="button" class="btn btn-info" onclick="AddPage()">
+                    <button id="btnAddPage" type="button" class="btn btn-info btn-raised" onclick="AddPage()">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Page
                     </button>
-                    <button id="btnClearPage" type="button" class="btn btn-success" onclick="ClearPage()">
+                    <button id="btnClearPage" type="button" class="btn btn-success btn-raised" onclick="ClearPage()">
                         <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Clear Page
                     </button>
-                    <button id="btnDeletePage" type="button" class="btn btn-danger" onclick="DeletePage()">
+                    <button id="btnDeletePage" type="button" class="btn btn-danger btn-raised" onclick="DeletePage()">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Page
                     </button>
                 </div>
@@ -208,7 +216,7 @@
         </tr>
         <tr valign="center">
             <td colspan="2" align="right">
-                <button id="btnSaveBook" type="button" class="btn btn-success" onclick="SaveBook()">
+                <button id="btnSaveBook" type="button" class="btn btn-success btn-raised" onclick="SaveBook()">
                     <span class="icon-floppy" aria-hidden="true"></span>
                      Save Book
                 </button>
@@ -240,164 +248,155 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="message-text" class="control-label">Message:</label>
-                            <textarea class="form-control" id="textContent" placeholder="Write text to insert and click on canvas where you want it" 
-                                      data-toggle="tooltip" data-placement="top" title="Press Shift+Enter to Submit your text"></textarea>
+                            <textarea class="form-control input-sm floating-label" id="textContent" placeholder="Messae" 
+                                      data-original-title="Press Shift+Enter to Submit your text" data-toggle="tooltip" data-placement="top" title=""></textarea>
                         </div>
                     </form>              
-                    <nav class="navbar navbar-default">
-                        <div class="container-fluid">
-                            <div class="collapse navbar-collapse">
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                    <ul class="nav navbar-nav">
-                                        <li class="dropdown">
-                                            <button id="selFontFamily" class="btn btn-default dropdown-toggle btn-xs" type="button" data-toggle="dropdown" aria-expanded="true" style="width:150px; text-align:initial">
-                                                <table width="100%">
-                                                    <tr>
-                                                        <td style="width:95%;overflow:hidden">
-                                                            <span id="selFont">[Select the Font to Use]</span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="caret"></span>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </button>
-                                            <ul id="selFontFamilyLst" style="height:250px; overflow-y:scroll;" class="dropdown-menu" role="menu" aria-labelledby="selFontFamily">
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Arial, Helvetica, sans-serif" onclick="SetFont(this);">Arial</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Comic Sans MS, cursive, sans-serif" onclick="SetFont(this);">Comic Sans</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Impact, Charcoal, sans-serif" onclick="SetFont(this);">Impact</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Sans Unicode, Lucida Grande, sans-serif" onclick="SetFont(this);">Lucida</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Tahoma, Geneva, sans-serif" onclick="SetFont(this);">Tahoma</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Trebuchet MS, Helvetica, sans-serif" onclick="SetFont(this);">Trebuchet</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Verdana, Geneva, sans-serif" onclick="SetFont(this);">Verdana</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Georgia, serif" onclick="SetFont(this);">Georgia</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Courier New, Courier, monospace" onclick="SetFont(this);">Courier New</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Console, Monaco, monospace" onclick="SetFont(this);">Lucida Console</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Times New Roman, Times, serif" onclick="SetFont(this);">Times New Roman</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>    
-                                            <div id="toolBox" class="btn-toolbar" role="toolbar" arial-label="Text Toolbar">
-                                                <div class="btn-group btn-group-xs" role="group" aria-label="Font Normal Options" data-toggle="buttons">
-                                                    <label class="btn btn-default">
-                                                        <input id="boldText" autocomplete="off" type="checkbox"/>
-                                                        <span class="fa fa-bold fa-fw"></span>
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input id="italicText" autocomplete="off" type="checkbox"/>
-                                                        <span class="fa fa-italic fa-fw"></span>
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input id="underlineText" autocomplete="off" type="checkbox"/>
-                                                        <span class="fa fa-underline fa-fw"></span>
-                                                    </label>
-                                                    <label class="btn btn-default">                    
-                                                        <input id="strokeText" autocomplete="off" type="checkbox"/>
-                                                        <span class="fa fa-strikethrough fa-fw"></span>
-                                                    </label>
-                                                    <label class="btn btn-default" style="text-decoration: overline;">                
-                                                        <input id="overlineText" autocomplete="off" type="checkbox"/>O
-                                                    </label>
-                                                    <label class="btn btn-default" style="text-shadow: 2px 2px 2px #FF0000">
-                                                        <input id="shadowText" autocomplete="off" type="checkbox" onchange="ToggleShadowOptions()"/>S
-                                                    </label>
-                                                    <label class="btn btn-default">
-                                                        <input id="curvedText" autocomplete="off" type="checkbox" onchange="ToggleCurvedTextOptions()"/>Texto Curvo
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <form class="navbar-form navbar-left">
-                                            <div class="input-group input-group-sm" style="width:1%">
-                                                <span class="input-group-addon"><i class="fa fa-text-height fa-fw"></i></span>
-                                                <input id="txtFontSize" type="number" class="form-control" style="width:60px;" value="40" />
-                                            </div>
-                                            <div class="input-group input-group-sm" style="width:1%">
-                                                <span class="input-group-addon icon-tint"></span>
-                                                <div class="input-group-btn">
-                                                    <input id="textColor" class="btn btn-default btn-xs" type="color"/>                        
-                                                </div>
-                                            </div>
-                                            <div class="input-group input-group-sm" style="width: 10%">
-                                                <span class="input-group-addon">Outline Color:</span>
-                                                <div class="input-group-btn">
-                                                    <input id="outlineColor" class="btn btn-default" type="color"/>
-                                                </div>
-                                            </div>
-                                            <input id="txtOutlineWidth" type="number" class="form-control input-sm" style="width:120px;" placeholder="Outline Weight"/>
-                                            <div class="form-group" data-toggle="buttons" >
-                                            </div>
-                                        </form>
+                    <div class="container-fluid">
+                        <div class="collapse navbar-collapse">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="dropdown">
+                                        <button id="selFontFamily" class="btn btn-default dropdown-toggle btn-xs btn-raised" type="button" data-toggle="dropdown" aria-expanded="true" style="text-align:initial">
+                                            <table width="100%">
+                                                <tr>
+                                                    <td style="width:95%;overflow:hidden">
+                                                        <span id="selFont">[Select the Font to Use]</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="caret"></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </button>
+                                        <ul id="selFontFamilyLst" style="height:250px; overflow-y:scroll;" class="dropdown-menu" role="menu" aria-labelledby="selFontFamily">
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Arial, Helvetica, sans-serif" onclick="SetFont(this);">Arial</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Comic Sans MS, cursive, sans-serif" onclick="SetFont(this);">Comic Sans</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Impact, Charcoal, sans-serif" onclick="SetFont(this);">Impact</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Sans Unicode, Lucida Grande, sans-serif" onclick="SetFont(this);">Lucida</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Tahoma, Geneva, sans-serif" onclick="SetFont(this);">Tahoma</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Trebuchet MS, Helvetica, sans-serif" onclick="SetFont(this);">Trebuchet</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Verdana, Geneva, sans-serif" onclick="SetFont(this);">Verdana</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Georgia, serif" onclick="SetFont(this);">Georgia</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Courier New, Courier, monospace" onclick="SetFont(this);">Courier New</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Lucida Console, Monaco, monospace" onclick="SetFont(this);">Lucida Console</a></li>
+                                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" style="font-family:Times New Roman, Times, serif" onclick="SetFont(this);">Times New Roman</a></li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <form class="navbar-form navbar-left">
-                                        <div id="shadowTextOptions" class="form-group" style="display:none">
-                                        <div class="input-group input-group-sm" style="width:1%">
-                                            <span class="input-group-addon">Shadow Width:</span>
-                                            <input id="txtShadowWidth" class="form-control" type="number" style="width:60px;" placeholder="Shadow Width" value="0" />
+                                <div class="col-xs-6">    
+                                    <div id="toolBox" class="btn-toolbar" role="toolbar" arial-label="Text Toolbar">
+                                        <div class="btn-group btn-group-xs" role="group" aria-label="Font Normal Options" data-toggle="buttons">
+                                            <label class="btn btn-default mdi-editor-format-bold">
+                                                <input id="boldText" autocomplete="off" type="checkbox"/>
+                                            </label>
+                                            <label class="btn btn-default mdi-editor-format-italic">
+                                                <input id="italicText" autocomplete="off" type="checkbox"/>
+                                            </label>
+                                            <label class="btn btn-default mdi-editor-format-underline">
+                                                <input id="underlineText" autocomplete="off" type="checkbox"/>
+                                            </label>
+                                            <label class="btn btn-default mdi-editor-format-strikethrough">                    
+                                                <input id="strokeText" autocomplete="off" type="checkbox"/>
+                                            </label>
+                                            <label class="btn btn-default" style="text-decoration: overline;">                
+                                                <input id="overlineText" autocomplete="off" type="checkbox"/>O
+                                            </label>
+                                            <label class="btn btn-default" style="text-shadow: 2px 2px 2px #FF0000">
+                                                <input id="shadowText" autocomplete="off" type="checkbox" onchange="ToggleShadowOptions()"/>S
+                                            </label>
+                                            <label class="btn btn-default">
+                                                <input id="curvedText" autocomplete="off" type="checkbox" onchange="ToggleCurvedTextOptions()"/>Texto Curvo
+                                            </label>
                                         </div>
-                                        <input id="txtShadowLeft" class="form-control input-sm" type="number" style="width:60px;" placeholder="Left"/>
-                                        <input id="txtShadowTop" class="form-control input-sm" type="number" style="width:60px;" placeholder="Top"/>
-                                        <div class="input-group input-group-sm" style="width: 10%">
-                                            <span class="input-group-addon">Shadow Color:</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <form class="form-inline">
+                                    <label class="control-label">
+                                        <i class="mdi-editor-format-size"></i>
+                                        <input id="txtFontSize" type="number" class="form-control input-sm" style="width:45px;" value="40" />
+                                    </label>
+                                    <div class="input-group input-group-sm" style="width:1%" data-original-title="Text Color" data-toggle="tooltip" data-placement="top" title="">
+                                        <label class="control-label">
+                                            <i class="mdi-editor-format-color-text"></i>
+                                        </label>
+                                        <div class="input-group-btn">
+                                            <input id="textColor" class="btn btn-sm btn-raised" type="color"/>                        
+                                        </div>
+                                    </div>
+                                    <div class="input-group input-group-sm" style="width: 10%" data-original-title="Text Ouline Color" data-toggle="tooltip" data-placement="top" title="">
+                                        <label class="control-label">
+                                            <i class="mdi-editor-border-color"></i>
+                                        </label>
+                                        <div class="input-group-btn">
+                                            <input id="outlineColor" class="btn btn-sm btn-raised" type="color"/>
+                                        </div>
+                                    </div>
+                                    <input id="txtOutlineWidth" type="number" class="form-control input-xs floating-label" style="width:120px;" placeholder="Outline Weight"/>
+                                </form>
+                            </div>
+                            <div class="row">
+                                <form class="form-inline form-group" id="shadowTextOptions" style="display:none">
+                                    <legend>Shadow Settings:</legend>
+                                        <input id="txtShadowWidth" class="form-control input-sm floating-label" type="number" style="width:110px;" placeholder="Shadow Width" value="0" />
+                                        <input id="txtShadowLeft" class="form-control input-sm floating-label" type="number" style="width:60px;" placeholder="Left"/>
+                                        <input id="txtShadowTop" class="form-control input-sm floating-label" type="number" style="width:60px;" placeholder="Top"/>
+                                        <div class="input-group input-group-sm" style="width: 28%">
+                                            <label class="control-label">Shadow Color:</label>
                                             <div class="input-group-btn">
-                                                <input id="shadowColor" class="btn btn-default btn-xs" type="color"/>                                    
+                                                <input id="shadowColor" class="btn btn-sm btn-raised" type="color"/>                                    
+                                            </div>
+                                        </div>
+                                </form>
+                                <form class="form-group" id="curvedTextOptions" style="display:none">
+                                    <legend>Curved Text Settings</legend>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <label class="control-label">Radio: </label>
+                                            <!--<input type="range"  min="0" max="100" value="100" class="radius form-control" />-->
+                                            <div class="radius slider shor"></div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <label class="control-label">Spacing: </label>
+                                            <!--<input type="range"  min="5" max="40" value="10" class="spacing form-control" />-->
+                                            <div class="spacing slider shor"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <label class="control-label">Reverse Text:</label>
+                                            <div class="togglebutton">
+                                                <label>
+                                                    <input  class="reverse" type="checkbox">
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-9">
+                                            <label class="control-label">Aligment: </label>
+                                            <div class="btn-group btn-group-xs" data-toggle="buttons">
+                                                <label class="btn btn-default mdi-editor-format-align-left">
+                                                    <input type="radio" name="align" class="textAlign" autocomplete="off" value="left" />
+                                                </label> 
+                                                <label class="btn btn-default mdi-editor-format-align-center active">
+                                                    <input type="radio" name="align" class="textAlign" autocomplete="off" value="center" checked />
+                                                </label>  
+                                                <label class="btn btn-default mdi-editor-format-align-right">
+                                                    <input type="radio" name="align" class="textAlign" autocomplete="off" value="right" />
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
-                                        <div id="curvedTextOptions" class="form-group" style="display:none">
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-addon">Radio: </span>
-                                                    <input type="range"  min="0" max="100" value="100" class="radius form-control" />
-                                                </div>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-addon">Espaciamiento: </span>
-                                                    <input type="range"  min="5" max="40" value="10" class="spacing form-control" />
-                                                </div>
-                                                <div class="btn-group btn-group-xs" data-toggle="buttons">
-                                                    <span>Texto Invertido:</span>
-                                                    <label class="btn btn-default fa fa-check">
-                                                        <input type="radio" name="reverse" class="reverse" value="true" autocomplete="off"/>
-                                                    </label> 
-                                                    <label class="btn btn-default fa fa-times active">
-                                                        <input type="radio" name="reverse" class="reverse" value="false" autocomplete="off" checked />
-                                                    </label>
-                                                </div>
-                                                <div class="btn-group btn-group-xs" data-toggle="buttons">
-                                                    <span>Alineacion: </span>
-                                                    <label class="btn btn-default fa fa-align-left">
-                                                        <input type="radio" name="align" class="textAlign" autocomplete="off" value="left" />
-                                                    </label> 
-                                                    <label class="btn btn-default fa fa-align-center active">
-                                                        <input type="radio" name="align" class="textAlign" autocomplete="off" value="center" checked />
-                                                    </label>  
-                                                    <label class="btn btn-default fa fa-align-right">
-                                                        <input type="radio" name="align" class="textAlign" autocomplete="off" value="right" />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <canvas id="curvedTextPreview" width="460" height="240" style="border: 1px solid black;"></canvas>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <canvas id="curvedTextPreview" width="530" height="240" style="border: 1px solid black;"></canvas>
                                         </div>
                                     </div>
                                 </form>
-                                </div>
-                            </div>  
-                        </div>
-                    </nav>
+                            </div>
+                        </div>  
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -406,32 +405,58 @@
             </div>
         </div>
     </div>      
-    <!-- fabric framework necesary to create, store and load scrapbooks --> 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.min.js"></script>
-    <!-- fabric extension, customs fabric goes here --> 
-    <script src="js/fabric.canvasex.js"></script>
-    <script src="js/fabric.curvedText.js"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <!-- Include Parse library -->
-    <script src="//www.parsecdn.com/js/parse-1.3.5.min.js"></script>
-    <!-- Include the main script for Parse actions --> 
-    <!-- script src="../cloud/main.js"></script-->
-    <!-- FB Main script -->
-    <script src="js/fb.js"></script>
-    <!-- Utils script -->
-    <script src="js/Utils.js"></script>
-    <!-- Main script -->
-    <script src="js/ScrapMain.js"></script>
-    <!-- ScrapBook -->
-    <script src="js/ScrapBook.js"></script>
-    <!-- ScrapUser -->
-    <script src="js/ScrapUser.js"></script>
-    <!-- ScrapPage -->
-    <script src="js/ScrapPage.js"></script>
-    <!-- Fonts script -->
-    <script src="js/ScrapFonts.js"></script>
-  </body>
+        <!-- fabric framework necesary to create, store and load scrapbooks --> 
+        <script src="//cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.min.js"></script>
+        <!-- fabric extension, customs fabric goes here --> 
+        <script src="js/fabric.canvasex.js"></script>
+        <script src="js/fabric.curvedText.js"></script>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <!-- Include Parse library -->
+        <script src="//www.parsecdn.com/js/parse-1.3.5.min.js"></script>
+        <!-- No UI Slider -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.js"></script>
+        <!-- Include the main script for Parse actions --> 
+        <!-- script src="../cloud/main.js"></script-->
+        <!-- FB Main script -->
+        <script src="js/fb.js"></script>
+        <!-- Utils script -->
+        <script src="js/Utils.js"></script>
+        <!-- Main script -->
+        <script src="js/ScrapMain.js"></script>
+        <!-- ScrapBook -->
+        <script src="js/ScrapBook.js"></script>
+        <!-- ScrapUser -->
+        <script src="js/ScrapUser.js"></script>
+        <!-- ScrapPage -->
+        <script src="js/ScrapPage.js"></script>
+        <!-- Fonts script -->
+        <script src="js/ScrapFonts.js"></script>
+        <script src="js/ripples.min.js"></script>
+        <script src="js/material.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            // This command is used to initialize some elements and make them work properly
+            $.material.init();
+            $(".radius").noUiSlider({
+                    start: 100,
+                    connect: "lower",
+                    range: {
+                        min: 50,
+                        max: 200
+                    }
+                });
+            $(".spacing").noUiSlider({
+                    start: 10,
+                    connect: "lower",
+                    range: {
+                        min: 5,
+                        max: 40
+                    }
+                });
+        });
+        </script>
+    </body>
 </html>

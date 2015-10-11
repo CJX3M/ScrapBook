@@ -234,12 +234,16 @@ function ToggleCurvedTextOptions() {
         
         canvasCurvedPreview.add(previewCurvText).renderAll();
 
-        $('.radius, .spacing, .textAlign').change(function() {
+        $('.textAlign').change(function() {
             previewCurvText.set( $(this).attr('class').split(' ')[0], $(this).val() );
             canvasCurvedPreview.renderAll();
         });
+        $('.radius, .spacing').on('slide', function() {
+            previewCurvText.set( $(this).attr('class').split(' ')[0], $(this).val() );
+            canvasCurvedPreview.renderAll();            
+        })
         $('.reverse').change(function() {
-            previewCurvText.set('reverse', ( $(this).val() == 'true' ));
+            previewCurvText.set('reverse', $(this).is(':checked'));
             canvasCurvedPreview.renderAll();
         });
         $('#textContent').keyup(function() {
